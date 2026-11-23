@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meappai
+  labels:
+    app: meappai
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: meappai
+  template:
+    metadata:
+      labels:
+        app: meappai
+    spec:
+      containers:
+        - name: meappai
+          image: sealos.hub:5000/meappai/app:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8000
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 300m
+              memory: 256Mi
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8000
+            initialDelaySeconds: 3
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 20
